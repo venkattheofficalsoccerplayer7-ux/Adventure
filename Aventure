@@ -1,0 +1,163 @@
+
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87b8d5);
+scene.fog = new THREE.Fog(0x87b8d5, 20, 90);
+
+const camera = new THREE.PerspectiveCamera(
+  70, window.innerWidth / window.innerHeight, 0.1, 200
+);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x34502c, 2));
+
+const sunlight = new THREE.DirectionalLight(0xffffff, 2);
+sunlight.position.set(20, 30, 10);
+sunlight.castShadow = true;
+scene.add(sunlight);
+
+// Forest ground
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(200, 200),
+  new THREE.MeshStandardMaterial({ color: 0x315b32 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// Player
+const player = new THREE.Group();
+
+const body = new THREE.Mesh(
+  new THREE.CapsuleGeometry(0.45, 1, 4, 8),
+  new THREE.MeshStandardMaterial({ color: 0x2469d8 })
+);
+body.position.y = 1;
+body.castShadow = true;
+player.add(body);
+
+const head = new THREE.Mesh(
+  new THREE.SphereGeometry(0.35, 16, 16),
+  new THREE.MeshStandardMaterial({ color: 0xffc58b })
+);
+head.position.y = 1.95;
+player.add(head);
+
+scene.add(player);
+
+// Trees
+function makeTree(x, z) {
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.25, 0.4, 3, 8),
+    new THREE.MeshStandardMaterial({ color: 0x654321 })
+  );
+  trunk.position.set(x, 1.5, z);
+  trunk.castShadow = true;
+  scene.add(trunk);
+
+  const leaves = new THREE.Mesh(
+    new THREE.ConeGeometry(1.6, 4, 8),
+    new THREE.MeshStandardMaterial({ color: 0x164d27 })
+  );
+  leaves.position.set(x, 4, z);
+  leaves.castShadow = true;
+  scene.add(leaves);
+}
+
+for (let i = 0; i < 70; i++) {
+  const x = (Math.random() - 0.5) * 90;
+  const z = (Math.random() - 0.5) * 90;
+  if (Math.abs(x) > 5 || Math.abs(z) > 5) {
+    makeTree(x, z);
+  }
+}
+
+// Glowing crystals
+const crystals = [];
+
+for (let i = 0; i < 5; i++) {
+  const crystal = new THREE.Mesh(
+    new THREE.OctahedronGeometry(0.65),
+    new THREE.MeshStandardMaterial({
+      color: 0x00ffff,
+      emissive: 0x0088ff,
+      emissiveIntensity: 2
+    })
+  );
+
+  crystal.position.set(
+    (Math.random() - 0.5) * 35,
+    1,
+    (Math.random() - 0.5) * 35
+  );
+
+  scene.add(crystal);
+  crystals.push(crystal);
+}
+
+// Controls
+const keys = {};
+
+window.addEventListener("keydown", e => {
+  keys[e.key.toLowerCase()] = true;
+});
+
+window.addEventListener("keyup", e => {
+  keys[e.key.toLowerCase()] = false;
+});
+
+let score = 0;
+
+const hud = document.createElement("div");
+hud.style.cssText =
+  "position:absolute;top:70px;left:20px;color:white;font:bold 22px Arial;text-shadow:2px 2px 4px black";
+document.body.appendChild(hud);
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (keys.w || keys.arrowup) player.position.z -= 0.12;
+  if (keys.s || keys.arrowdown) player.position.z += 0.12;
+  if (keys.a || keys.arrowleft) player.position.x -= 0.12;
+  if (keys.d || keys.arrowright) player.position.x += 0.12;
+
+  camera.position.set(
+    player.position.x,
+    player.position.y + 5,
+    player.position.z + 9
+  );
+  camera.lookAt(
+    player.position.x,
+    player.position.y + 1,
+    player.position.z
+  );
+
+  crystals.forEach((crystal, i) => {
+    if (!crystal.visible) return;
+
+    crystal.rotation.y += 0.025;
+    crystal.position.y = 1 + Math.sin(Date.now() * 0.002 + i) * 0.2;
+
+    if (crystal.position.distanceTo(player.position) < 1.5) {
+      crystal.visible = false;
+      score++;
+    }
+  });
+
+  hud.textContent = "💎 Crystals: " + score + " / 5";
+
+  renderer.render(scene, camera);
+}
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+animate();
