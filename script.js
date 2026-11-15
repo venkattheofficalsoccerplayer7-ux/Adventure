@@ -1,9 +1,9 @@
 
 
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-scene.background = new THREE.Color(0x87b8d5);
-scene.fog = new THREE.Fog(0x87b8d5, 20, 90);
 const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x87b8d5, 20, 90);
+
 const camera = new THREE.PerspectiveCamera(
   70, window.innerWidth / window.innerHeight, 0.1, 200
 );
