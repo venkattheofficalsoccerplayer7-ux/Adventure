@@ -156,6 +156,12 @@ function animate() {
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
+  const loadingScreen = document.getElementById("loadingScreen");
+const startButton = document.getElementById("startButton");
+
+startButton.addEventListener("click", () => {
+  loadingScreen.style.display = "none";
+});
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
