@@ -102,12 +102,12 @@ for (let i = 0; i < 5; i++) {
 // Controls
 const keys = {};
 
-window.addEventListener("keydown", e => {
+window.addEventListener("keydown"
   keys[e.key.toLowerCase()] = true;
 });
 
-window.addEventListener("keyup", e => {
-  keys[e.key.toLowerCase()] = false;
+window.addEventListener("keydown", e => {
+  keys[e.key.toLowerCase()] = true;
 });
 
 let score = 0;
