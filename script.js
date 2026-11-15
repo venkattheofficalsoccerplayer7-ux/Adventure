@@ -166,3 +166,6 @@ startButton.addEventListener("click", () => {
 });
 
 animate();
+<header>
+  <img src="logo.png" alt="App Logo" width="120">
+</header>
