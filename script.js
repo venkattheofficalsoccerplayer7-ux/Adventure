@@ -156,16 +156,18 @@ function animate() {
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
-  const loadingScreen = document.getElementById("loadingScreen");
-const startButton = document.getElementById("startButton");
-
-startButton.addEventListener("click", () => {
-  loadingScreen.style.display = "none";
+  
 });
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 animate();
+const loadingScreen = document.getElementById("loadingScreen");
+const startButton = document.getElementById("startButton");
+
+startButton.addEventListener("click", () => {
+  loadingScreen.style.display = "none";
+});
 <header>
   <img src="logo.png" alt="App Logo" width="120">
 </header>
