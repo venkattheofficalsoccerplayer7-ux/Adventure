@@ -162,12 +162,3 @@ window.addEventListener("resize", () => {
 });
 
 animate();
-const loadingScreen = document.getElementById("loadingScreen");
-const startButton = document.getElementById("startButton");
-
-startButton.addEventListener("click", () => {
-  loadingScreen.style.display = "none";
-});
-<header>
-  <img src="logo.png" alt="App Logo" width="120">
-</header>
